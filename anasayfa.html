@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="WhatsApp Image 2026-04-15 at 11.48.33.jpeg">
+    <title>Biriken Finans | Anasayfa</title>
+    <link rel="stylesheet" href="anasayfa.css">
+    <script>
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+    }
+    
+    </script>
+</head>
+<body>
+
+    <div class="app-window">
+        
+        <header class="top-nav">
+            <div class="brand-logo">
+                <img src="WhatsApp Image 2026-04-15 at 11.48.33.jpeg" alt="Logo">
+                BİRİKEN FİNANS
+            </div>
+            <div class="top-right">                
+                <div class="user-profile" onclick="window.location.href='profil.html'">
+                    <div class="user-info">
+                        <strong id="nav-username"></strong>
+                        <span>Biriken A.Ş.</span>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Misafir&background=1b2559&color=fff" id="user-avatar" alt="User">
+                    <svg class="logout-icon" onclick="event.stopPropagation(); cikisYap()" viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-body">
+            
+            <aside class="sidebar">
+                <div class="icon-box active" onclick="window.location.href='anasayfa.html'">
+                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                </div>
+                <div class="icon-box" onclick="window.location.href='profil.html'">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+
+                <div class="bottom-icons">
+                    <div class="icon-box" onclick="window.location.href='ayarlar.html'">
+                        <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54c0.05,0.24,0.24,0.41,0.48,0.41h3.84c-0.24,0-0.43,0.17-0.47,0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                
+                <div class="left-col">
+                    
+                    <div class="welcome-banner" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2>Hoşgeldiniz, <strong id="welcome-name"></strong></h2>
+                            <p>Biriken Finans panelinizi dilediğiniz şekilde düzenleyebilirsiniz.</p>
+                        </div>
+                        <div class="live-datetime" style="text-align: right;">
+                            <h1 id="live-time" style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 1px;">00:00:00</h1>
+                            <span id="live-date" style="font-size: 13px; opacity: 0.8; font-weight: 500;">Yükleniyor...</span>
+                        </div>
+                    </div>
+
+                    <div class="charts-row">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Altın Varlıklarım</h3>
+                                <div class="action-group">
+                                    <button class="btn-action add" onclick="openM('gold-add')">+ Ekle</button>
+                                    <button class="btn-action sub" onclick="openM('gold-sub')">- Çıkar</button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div class="donut-container" id="goldChart">
+                                    <div class="donut-inner">
+                                        <b id="goldTL">0 TL</b>
+                                        <span id="goldPercText">%0 Doluluk</span>
+                                    </div>
+                                </div>
+                                <div class="chart-legend" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:var(--gold-gram)"></div> Gram</div><div class="legend-val" id="g-gram">0 gr</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:var(--gold-ceyrek)"></div> Çeyrek</div><div class="legend-val" id="g-ceyrek">0 Adet</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:var(--gold-yarim)"></div> Yarım</div><div class="legend-val" id="g-yarim">0 Adet</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:var(--gold-tam)"></div> Tam</div><div class="legend-val" id="g-tam">0 Adet</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:#f59e0b"></div> Ata</div><div class="legend-val" id="g-ata">0 Adet</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:#d97706"></div> Gremse</div><div class="legend-val" id="g-gremse">0 Adet</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:#b45309"></div> Ons</div><div class="legend-val" id="g-ons">0 Adet</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:#78350f"></div> 22 Ayar</div><div class="legend-val" id="g-22ayar">0 gr</div></div>
+                                    <div class="legend-item" style="grid-column: span 2;"><div class="legend-title"><div class="dot" style="background:#fcd34d"></div> 14 Ayar</div><div class="legend-val" id="g-14ayar">0 gr</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Döviz Varlıklarım</h3>
+                                <div class="action-group">
+                                    <button class="btn-action add" onclick="openM('curr-add')">+ Ekle</button>
+                                    <button class="btn-action sub" onclick="openM('curr-sub')">- Çıkar</button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div class="donut-container" id="currChart">
+                                    <div class="donut-inner">
+                                        <b id="currTL">0 TL</b>
+                                        <span id="currPercText">%0 Doluluk</span>
+                                    </div>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:var(--chart2-light)"></div> Dolar</div><div class="legend-val" id="v-usd">0 $</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:var(--chart2-mid)"></div> Euro</div><div class="legend-val" id="v-eur">0 €</div></div>
+                                    <div class="legend-item"><div class="legend-title"><div class="dot" style="background:var(--chart2-dark)"></div> Sterlin</div><div class="legend-val" id="v-gbp">0 £</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Portföy</h3>
+                            </div>
+                            <div class="portfolio-details">
+                                <span class="p-label">Toplam Varlık Büyüklüğü</span>
+                                <h1 id="totalBalance" class="p-total">0 TL</h1>
+                                
+                                <div class="p-target-info">
+                                    <span>Hedef: <b>1.000.000 TL</b></span>
+                                    <span id="totalPercentText">%0</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" id="totalBar" style="width: 0%; background: linear-gradient(90deg, #1b2559, #10b981);"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" style="margin-bottom: 10px;">
+                                <h3>İşlemlerim</h3>
+                                <span class="link-text" onclick="openAllTxModal()">Tümünü Gör</span>
+                            </div>
+                            <div class="tx-list" id="tx-container">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="right-col">
+                    
+                    <div class="card" style="flex:1;">
+                        <div class="card-header" style="margin-bottom:10px; border:none; padding:0; display:flex; justify-content:space-between; align-items:center;">
+                            <h3>Piyasa Verileri</h3>
+                            <button onclick="manuelYenile()" style="background:none; border:none; color:var(--text-muted, #64748b); cursor:pointer; padding:5px; transition:0.3s; display:flex; align-items:center;" title="Verileri Güncelle">
+                                <svg id="refresh-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 4 23 10 17 10"></polyline>
+                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="list-header">
+                            <span>VARLIK</span>
+                            <span>PİYASA DEĞERLERİ</span>
+                        </div>
+
+                        <div class="invest-list">
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent; display:flex; justify-content:center; align-items:center;">
+                                        <img src="https://flagcdn.com/w40/eu.png" style="width:100%; height:100%; object-fit:cover;" alt="EUR">
+                                    </div>
+                                    <div class="inv-name"><b>EUR</b><span>Euro</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-eur">Yükleniyor...</b></div>
+                            </div>
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent; display:flex; justify-content:center; align-items:center;">
+                                        <img src="https://flagcdn.com/w40/us.png" style="width:100%; height:100%; object-fit:cover;" alt="USD">
+                                    </div>
+                                    <div class="inv-name"><b>USD</b><span>Dolar</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-usd">Yükleniyor...</b></div>
+                            </div>
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent; display:flex; justify-content:center; align-items:center;">
+                                        <img src="https://flagcdn.com/w40/gb.png" style="width:100%; height:100%; object-fit:cover;" alt="GBP">
+                                    </div>
+                                    <div class="inv-name"><b>GBP</b><span>Sterlin</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-gbp">Yükleniyor...</b></div>
+                            </div>
+
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="8" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>GRAM</b><span>Gram Altın</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-gr">Yükleniyor...</b></div>
+                            </div>
+                            
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9h9"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>ÇEYREK</b><span>Çeyrek Altın</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-ceyrek">Yükleniyor...</b></div>
+                            </div>
+                            
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>YARIM</b><span>Yarım Altın</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-yarim">Yükleniyor...</b></div>
+                            </div>
+                            
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>TAM</b><span>Tam Altın</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-tam">Yükleniyor...</b></div>
+                            </div>
+                            
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 7l1.5 3 3 .5-2 2 .5 3-3-1.5-3 1.5.5-3-2-2 3-.5z"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>ATA</b><span>Cumhuriyet Altını</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-ata">Yükleniyor...</b></div>
+                            </div>
+                            
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="9" cy="10" r="6"/><circle cx="15" cy="14" r="6"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>GREMSE</b><span>Gremse Altın</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-gremse">Yükleniyor...</b></div>
+                            </div>
+                            
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>ONS</b><span>Ons Altın</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-ons">Yükleniyor...</b></div>
+                            </div>
+                            
+                            <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="8" stroke-dasharray="4 3"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>22 AYAR</b><span>Bilezik Gram</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-22ayar">Yükleniyor...</b></div>
+                            </div>
+                            
+                             <div class="inv-item">
+                                <div class="inv-left">
+                                    <div class="flag" style="padding:0; overflow:hidden; border:none; background:transparent;">
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fde047 0%, #d97706 100%); color:#78350f; border-radius:50%; box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="5"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="inv-name"><b>14 AYAR</b><span>Gram Altın</span></div>
+                                </div>
+                                <div class="inv-right"><b id="val-14ayar">Yükleniyor...</b></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="m-root" class="modal"><div class="modal-box"><h3 id="m-title">İşlem Yap</h3><div id="m-body"></div><div class="m-btns"><button class="btn-c" onclick="closeM()">İptal</button><button class="btn-s" id="m-save">Onayla</button></div></div></div>
+
+    <div id="tx-modal-root" class="modal">
+        <div class="modal-box" style="max-width: 500px; width: 90%;">
+            <h3 id="tx-m-title" style="margin-bottom: 10px;">Son İşlem Geçmişi</h3>
+            <div id="tx-m-body" style="max-height: 400px; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 10px;">
+            </div>
+            <div class="m-btns" style="margin-top: 20px;">
+                <button class="btn-c" onclick="closeAllTxModal()">Kapat</button>
+            </div>
+        </div>
+    </div>
+<script src="config.js"></script>
+    <script>
+        // Eski Hali: const API_URL = "https://birikenbackend.onrender.com/api";
+// Yeni Hali:
+const API_URL = "https://biriken-api.onrender.com/api";
+        const TARGET_LIMIT = 1000000;
+        let CANLI_KURLAR = { usd: 0, eur: 0, gbp: 0, gram: 0, ceyrek: 0, yarim: 0, tam: 0, ata: 0, gremse: 0, ons: 0, '22ayar': 0, '14ayar': 0 };
+        
+        let user = localStorage.getItem('aktifKullanici') || 'Misafir'; 
+        let U_KEY = user + "_"; 
+        let currentUserId = localStorage.getItem('userId');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if(document.getElementById('nav-username')) document.getElementById('nav-username').innerText = user;
+            if(document.getElementById('welcome-name')) document.getElementById('welcome-name').innerText = user;
+            
+            const kaydedilenFoto = localStorage.getItem(U_KEY + "avatar");
+            const profilResmi = document.getElementById('user-avatar');
+            if (profilResmi) {
+                profilResmi.src = kaydedilenFoto ? kaydedilenFoto : `https://ui-avatars.com/api/?name=${user}&background=1b2559&color=fff`;
+            }
+
+            await piyasaVerileriniCek(); 
+            renderTransactions(); 
+            saatiGuncelle();
+            setInterval(saatiGuncelle, 1000);
+            setInterval(piyasaVerileriniCek, 60000);
+        });
+
+        async function manuelYenile() {
+            const icon = document.getElementById('refresh-icon');
+            if (icon) {
+                icon.style.transition = "transform 0.6s ease-in-out";
+                icon.style.transform = "rotate(360deg)";
+            }
+            await piyasaVerileriniCek();
+            setTimeout(() => {
+                if (icon) {
+                    icon.style.transition = "none";
+                    icon.style.transform = "rotate(0deg)";
+                }
+            }, 600);
+        }
+
+        async function piyasaVerileriniCek() {
+            try {
+                const res = await fetch('https://finans.truncgil.com/v3/today.json');
+                const data = await res.json();
+                const parse = (s) => {
+                    if(!s) return 0;
+                    let clean = s.replace(/\./g, '').replace(',', '.');
+                    return parseFloat(clean) || 0;
+                };
+
+                CANLI_KURLAR = {
+                    usd: parse(data['USD']?.Selling),
+                    eur: parse(data['EUR']?.Selling),
+                    gbp: parse(data['GBP']?.Selling),
+                    gram: parse(data['gram-altin']?.Selling),
+                    ceyrek: parse(data['ceyrek-altin']?.Selling),
+                    yarim: parse(data['yarim-altin']?.Selling),
+                    tam: parse(data['tam-altin']?.Selling),
+                    ata: parse(data['cumhuriyet-altini']?.Selling || data['ata-altin']?.Selling),
+                    gremse: parse(data['gremse-altin']?.Selling),
+                    ons: parse(data['ons']?.Selling),
+                    '22ayar': parse(data['22-ayar-bilezik']?.Selling),
+                    '14ayar': parse(data['14-ayar-altin']?.Selling)
+                };
+
+                const setVal = (id, val) => { if(document.getElementById(id)) document.getElementById(id).innerText = val ? val : "0,00"; };
+                
+                setVal('val-usd', data['USD']?.Selling);
+                setVal('val-eur', data['EUR']?.Selling);
+                setVal('val-gbp', data['GBP']?.Selling);
+                setVal('val-gr', data['gram-altin']?.Selling);
+                setVal('val-ceyrek', data['ceyrek-altin']?.Selling);
+                setVal('val-yarim', data['yarim-altin']?.Selling);
+                setVal('val-tam', data['tam-altin']?.Selling);
+                setVal('val-ata', (data['cumhuriyet-altini']?.Selling || data['ata-altin']?.Selling));
+                setVal('val-gremse', data['gremse-altin']?.Selling);
+                setVal('val-ons', data['ons']?.Selling);
+                setVal('val-22ayar', data['22-ayar-bilezik']?.Selling);
+                setVal('val-14ayar', data['14-ayar-altin']?.Selling);
+
+                updateUI(); 
+            } catch (e) { console.error("Kurlar çekilemedi."); }
+        }
+
+        function updateUI() {
+            const getV = (k) => { let v = localStorage.getItem(U_KEY + "b_gold_" + k); return (v === null || isNaN(v)) ? 0 : parseFloat(v); };
+            const getC = (k) => { let v = localStorage.getItem(U_KEY + "b_curr_" + k); return (v === null || isNaN(v)) ? 0 : parseFloat(v); };
+
+            const g = { gram:getV('gram'), ceyrek:getV('ceyrek'), yarim:getV('yarim'), tam:getV('tam'), ata:getV('ata'), gremse:getV('gremse'), ons:getV('ons'), '22ayar':getV('22ayar'), '14ayar':getV('14ayar') };
+            const c = { usd:getC('USD'), eur:getC('EUR'), gbp:getC('GBP') };
+
+            const sk = (v) => (v && !isNaN(v)) ? v : 0;
+
+            const gTL = (g.gram*sk(CANLI_KURLAR.gram))+(g.ceyrek*sk(CANLI_KURLAR.ceyrek))+(g.yarim*sk(CANLI_KURLAR.yarim))+(g.tam*sk(CANLI_KURLAR.tam))+(g.ata*sk(CANLI_KURLAR.ata))+(g.gremse*sk(CANLI_KURLAR.gremse))+(g.ons*sk(CANLI_KURLAR.ons))+(g['22ayar']*sk(CANLI_KURLAR['22ayar']))+(g['14ayar']*sk(CANLI_KURLAR['14ayar']));
+            const cTL = (c.usd*sk(CANLI_KURLAR.usd))+(c.eur*sk(CANLI_KURLAR.eur))+(c.gbp*sk(CANLI_KURLAR.gbp));
+            const total = gTL + cTL;
+
+            const setT = (id, txt) => { if(document.getElementById(id)) document.getElementById(id).innerText = txt; };
+            const fmt = (v) => isNaN(v) ? "0 TL" : Math.round(v).toLocaleString('tr-TR') + " TL";
+
+            setT('goldTL', fmt(gTL));
+            setT('currTL', fmt(cTL));
+            setT('totalBalance', fmt(total));
+
+            setT('g-gram', g.gram.toFixed(2) + " gr");
+            setT('g-ceyrek', g.ceyrek + " Adet");
+            setT('g-yarim', g.yarim + " Adet");
+            setT('g-tam', g.tam + " Adet");
+            setT('g-ata', g.ata + " Adet");
+            setT('g-gremse', g.gremse + " Adet");
+            setT('g-ons', g.ons + " Adet");
+            setT('g-22ayar', g['22ayar'].toFixed(2) + " gr");
+            setT('g-14ayar', g['14ayar'].toFixed(2) + " gr");
+            setT('v-usd', c.usd.toLocaleString() + " $");
+            setT('v-eur', c.eur.toLocaleString() + " €");
+            setT('v-gbp', c.gbp.toLocaleString() + " £");
+
+            const totalP = Math.min((total / TARGET_LIMIT) * 100, 100);
+            if(document.getElementById('totalBar')) document.getElementById('totalBar').style.width = totalP + "%";
+            setT('totalPercentText', "%" + Math.round(totalP));
+
+            let s1 = (g.gram * sk(CANLI_KURLAR.gram) / TARGET_LIMIT) * 100;
+            let s2 = s1 + (g.ceyrek * sk(CANLI_KURLAR.ceyrek) / TARGET_LIMIT) * 100;
+            let s3 = s2 + (g.yarim * sk(CANLI_KURLAR.yarim) / TARGET_LIMIT) * 100;
+            let s4 = s3 + (g.tam * sk(CANLI_KURLAR.tam) / TARGET_LIMIT) * 100;
+            let gTotal = s4 + (((g.ata+g.gremse+g.ons+g['22ayar']+g['14ayar']) * sk(CANLI_KURLAR.gram) / TARGET_LIMIT) * 100);
+            
+            const goldC = document.getElementById('goldChart');
+            if(goldC) goldC.style.background = gTL > 0 ? `conic-gradient(var(--gold-gram) 0% ${s1}%, var(--gold-ceyrek) ${s1}% ${s2}%, var(--gold-yarim) ${s2}% ${s3}%, var(--gold-tam) ${s3}% ${s4}%, #f59e0b ${s4}% ${gTotal}%, var(--chart-empty) ${gTotal}% 100%)` : "var(--chart-empty)";
+            setT('goldPercText', "%" + Math.round(Math.min(gTotal, 100)) + " Doluluk");
+
+            let cs1 = (c.usd * sk(CANLI_KURLAR.usd) / TARGET_LIMIT) * 100;
+            let cs2 = cs1 + (c.eur * sk(CANLI_KURLAR.eur) / TARGET_LIMIT) * 100;
+            let cs3 = cs2 + (c.gbp * sk(CANLI_KURLAR.gbp) / TARGET_LIMIT) * 100;
+            
+            const currC = document.getElementById('currChart');
+            if(currC) currC.style.background = cTL > 0 ? `conic-gradient(var(--chart2-light) 0% ${cs1}%, var(--chart2-mid) ${cs1}% ${cs2}%, var(--chart2-dark) ${cs2}% ${cs3}%, var(--chart-empty) ${cs3}% 100%)` : "var(--chart-empty)";
+            setT('currPercText', "%" + Math.round(Math.min(cs3, 100)) + " Doluluk");
+        }
+
+        async function saveProcess(type) {
+            const val = parseFloat(document.getElementById('m-val').value);
+            if (!val || val <= 0) return;
+            
+            let isAdd = type.includes('add');
+            let subType = type.startsWith('gold') ? document.getElementById('g-select').value : document.getElementById('c-select').value;
+            let mainType = type.startsWith('gold') ? "Altın" : "Döviz";
+            
+            let subK = subType.toLowerCase().replace(" ", "");
+            let lsK = type.startsWith('gold') ? `${U_KEY}b_gold_${subK}` : `${U_KEY}b_curr_${subType}`;
+            
+            let cur = parseFloat(localStorage.getItem(lsK)) || 0;
+            let next = isAdd ? cur + val : cur - val;
+            if (next < 0) { showToast("Yetersiz bakiye!", "error"); return; }
+            
+            localStorage.setItem(lsK, next);
+            logTransaction(type, subType, val, isAdd);
+
+            if (currentUserId) {
+                try {
+                    await fetch(`${API_URL}/Transaction/add`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: parseInt(currentUserId), type: mainType, subType: subType, amount: val, isAdd: isAdd })
+                    });
+                } catch (e) { console.warn("Bulut senkronizasyonu yapılamadı."); }
+            }
+
+            closeM();
+            updateUI(); 
+            renderTransactions();
+            showToast("İşlem kaydedildi.", "success");
+        }
+
+        function logTransaction(t, s, a, i) {
+            let txs = JSON.parse(localStorage.getItem(U_KEY + "b_transactions")) || [];
+            txs.unshift({ day: new Date().getDate(), month: "Nis", title: t.startsWith('gold') ? "Altın":"Döviz", desc: s + (i?" Eklendi":" Çıkarıldı"), amountStr: (i?"+":"-")+a, isAdd: i });
+            localStorage.setItem(U_KEY + "b_transactions", JSON.stringify(txs.slice(0, 50)));
+        }
+
+        function renderTransactions(all = false) {
+            const container = all ? document.getElementById('tx-m-body') : document.getElementById('tx-container');
+            if(!container) return;
+            let txs = JSON.parse(localStorage.getItem(U_KEY + "b_transactions")) || [];
+            if (!txs.length) { container.innerHTML = '<div class="tx-empty">İşlem yok.</div>'; return; }
+            container.innerHTML = "";
+            (all ? txs : txs.slice(0, 4)).forEach(tx => {
+                container.innerHTML += `<div class="tx-item"><div class="tx-date">${tx.day}<span>${tx.month}</span></div><div class="tx-info"><b>${tx.title}</b><span>${tx.desc}</span></div><div class="tx-amount ${tx.isAdd?'pos':'neg'}">${tx.amountStr}</div></div>`;
+            });
+        }
+
+        function openAllTxModal() {
+            const m = document.getElementById('tx-modal-root');
+            if(m) {
+                m.style.display = 'flex';
+                renderTransactions(true); 
+            }
+        }
+
+        function closeAllTxModal() { 
+            const m = document.getElementById('tx-modal-root');
+            if(m) m.style.display='none'; 
+        }
+
+        function openM(type) {
+            const m = document.getElementById('m-root');
+            if(!m) return;
+            m.style.display = 'flex';
+            let isG = type.startsWith('gold');
+            document.getElementById('m-title').innerText = isG ? (type.includes('add') ? "Altın Ekle" : "Altın Çıkar") : (type.includes('add') ? "Döviz Ekle" : "Döviz Çıkar");
+            let content = `<input type="hidden" id="m-type" value="${type}">`;
+            content += isG ? `<select class="m-input" id="g-select"><option value="Gram">Gram</option><option value="Çeyrek">Çeyrek</option><option value="Yarım">Yarım</option><option value="Tam">Tam</option><option value="Ata">Ata</option><option value="Gremse">Gremse</option><option value="Ons">Ons</option><option value="22 Ayar">22 Ayar</option><option value="14 Ayar">14 Ayar</option></select>` : `<select class="m-input" id="c-select"><option value="USD">Dolar ($)</option><option value="EUR">Euro (€)</option><option value="GBP">Sterlin (£)</option></select>`;
+            content += `<input type="number" id="m-val" class="m-input" placeholder="Miktar..." step="0.01">`;
+            document.getElementById('m-body').innerHTML = content;
+            document.getElementById('m-save').onclick = () => saveProcess(type);
+        }
+        
+        function closeM() { if(document.getElementById('m-root')) document.getElementById('m-root').style.display='none'; }
+        
+        function saatiGuncelle() {
+            const s = new Date();
+            const tE = document.getElementById('live-time');
+            const dE = document.getElementById('live-date');
+            if(tE) tE.innerText = s.toLocaleTimeString('tr-TR');
+            if(dE) dE.innerText = s.toLocaleDateString('tr-TR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        }
+
+        function showToast(message, type) {
+            let c = document.getElementById('toast-container') || (()=>{const x=document.createElement('div');x.id='toast-container';document.body.appendChild(x);return x;})();
+            const t = document.createElement('div'); t.className = `toast toast-${type}`; t.innerText = message;
+            c.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => c.removeChild(t), 300); }, 3000);
+        }
+
+        function cikisYap() { 
+            localStorage.removeItem('aktifKullanici'); 
+            localStorage.removeItem('userId'); 
+            window.location.href="index.html"; 
+        }
+    </script>
+</body>
+</html>

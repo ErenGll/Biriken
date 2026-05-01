@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="WhatsApp Image 2026-04-15 at 11.48.33.jpeg">
+    <title>Profilim | Biriken Finans</title>
+    <link rel="stylesheet" href="profil.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+    }
+    </script>
+</head>
+<body>
+
+    <div class="profile-container">
+        <div class="header-bar">
+            <button class="back-btn" onclick="window.history.back()">
+                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                Geri Dön
+            </button>
+            <h2>Profil Ayarları</h2>
+            <div style="width: 100px;"></div> 
+        </div>
+
+        <div class="profile-card">
+            <div class="avatar-section">
+                <div class="avatar-wrapper">
+                    <img id="avatar-img" src="" alt="Profil Fotoğrafı">
+                    <label for="avatar-upload" class="avatar-edit-btn">
+                        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.69l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    </label>
+                    <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="loadAvatar(event)">
+                </div>
+                <h3 id="display-name">Yükleniyor...</h3>
+                <span>Biriken A.Ş. </span>
+            </div>
+
+            <div class="form-section">
+                <div class="input-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" id="input-name" placeholder="Adınızı girin">
+                </div>
+
+                <div class="input-group">
+                    <label>E-Posta Adresi</label>
+                    <input type="email" id="input-email" placeholder="ornek@biriken.com">
+                </div>
+
+                <div class="input-group">
+                    <label>Şifre</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="input-password" placeholder="Yeni şifre belirleyin">
+                        <span class="toggle-pass" onclick="togglePassword()" style="cursor: pointer; display: flex; align-items: center; color: #64748b; transition: 0.3s;">
+    <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+</span>
+                    </div>
+                </div>
+
+                <button class="save-btn" onclick="saveProfile()">Değişiklikleri Kaydet</button>
+            </div>
+        </div>
+    </div>
+<script src="config.js"></script>
+  <script>
+    const API_URL = "https://biriken-api.onrender.com/api";
+
+    // GÜVENLİK FİLTRESİ: Gerçekten boş mu yoksa "undefined" yazısı mı var kontrol eder
+    function getSafeData(key, fallback) {
+        let val = localStorage.getItem(key);
+        if (!val || val === "null" || val === "undefined" || val === "") {
+            return fallback;
+        }
+        return val;
+    }
+
+    let currentUserId = getSafeData('userId', null);
+    let userName = getSafeData('aktifKullanici', 'Misafir');
+    let U_KEY = userName + "_";
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (!currentUserId) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Eski db_ kasasından veya normal hafızadan temiz veriyi al
+        let dbData = JSON.parse(localStorage.getItem('db_' + userName)) || {};
+        const userEmail = dbData.email || getSafeData(U_KEY + 'email', '');
+        const userPass = dbData.pass || getSafeData(U_KEY + 'password', '');
+        
+        const userAvatar = getSafeData(U_KEY + 'avatar', `https://ui-avatars.com/api/?name=${userName !== 'Misafir' ? userName : 'Kullanici'}&background=e2e8f0&color=1b2559`);
+
+        // Kutuları doldur (Eğer isim "Misafir" ise kutuyu boş bırak ki adam kendi adını yazabilsin)
+        document.getElementById('input-name').value = userName !== 'Misafir' ? userName : '';
+        document.getElementById('display-name').innerText = userName !== 'Misafir' ? userName : 'Kullanıcı';
+        document.getElementById('input-email').value = userEmail;
+        document.getElementById('input-password').value = userPass;
+        document.getElementById('avatar-img').src = userAvatar;
+
+        // SQL'den son teyidi al
+        await fetchUserProfile();
+    });
+
+    async function fetchUserProfile() {
+        try {
+            const response = await fetch(`${API_URL}/Auth/user/${currentUserId}`);
+            if (response.ok) {
+                const data = await response.json();
+                
+                // SQL'de "undefined" kelimesi kayıtlıysa onu da engelle
+                const sqlName = data.username || data.Username;
+                if (sqlName && sqlName !== "undefined" && sqlName !== "null") {
+                    document.getElementById('input-name').value = sqlName;
+                    document.getElementById('display-name').innerText = sqlName;
+                }
+                
+                const sqlEmail = data.email || data.Email;
+                if (sqlEmail && sqlEmail !== "undefined" && sqlEmail !== "null") {
+                    document.getElementById('input-email').value = sqlEmail;
+                }
+            }
+        } catch (error) {
+            console.warn("SQL'den güncel veriler alınamadı.");
+        }
+    }
+
+    async function saveProfile() {
+        const newName = document.getElementById('input-name').value.trim();
+        const newEmail = document.getElementById('input-email').value.trim();
+        const newPass = document.getElementById('input-password').value.trim();
+
+        if (!newName) {
+            alert("Ad alanı boş bırakılamaz kanka!");
+            return;
+        }
+
+        // 1. KRİTİK KONTROL: ID gerçekten bir sayı mı?
+        let userIdNum = parseInt(currentUserId);
+        if (isNaN(userIdNum) || userIdNum <= 0) {
+            alert(`Sistem Hatası: ID numaran bozuk (${currentUserId}).\nLütfen çıkış yapıp tekrar giriş yap!`);
+            window.location.href = "index.html";
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/Auth/update/${userIdNum}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    id: userIdNum, 
+                    username: newName, 
+                    email: newEmail, 
+                    password: newPass 
+                })
+            });
+
+            if (!response.ok) {
+                const errTxt = await response.text();
+                alert(`Backend Hatası (404):\nSQL'de ID'si ${userIdNum} olan kullanıcı bulunamadı! Tarayıcı geçmişini temizle.`);
+                return; 
+            }
+        } catch (error) {
+            alert("Sunucuya bağlanılamadı! Backend (C#) açık mı?");
+            return; 
+        }
+
+        // Buralar senin o mükemmel bakiye taşıma kodların (Hiç dokunmadım)
+        const oldName = userName;
+        const newKey = newName + "_";
+
+        let dbRecord = JSON.parse(localStorage.getItem('db_' + oldName)) || { user: oldName };
+        dbRecord.user = newName;
+        dbRecord.email = newEmail;
+        dbRecord.pass = newPass;
+
+        if (oldName !== newName && oldName !== "Misafir" && oldName !== "undefined") {
+            localStorage.setItem('db_' + newName, JSON.stringify(dbRecord));
+            localStorage.removeItem('db_' + oldName);
+
+            let keysToMigrate = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                let key = localStorage.key(i);
+                if (key && key.startsWith(oldName + "_")) {
+                    keysToMigrate.push(key);
+                }
+            }
+            keysToMigrate.forEach(key => {
+                let data = localStorage.getItem(key);
+                localStorage.setItem(key.replace(oldName + "_", newKey), data); 
+                localStorage.removeItem(key); 
+            });
+        } else {
+            localStorage.setItem('db_' + newName, JSON.stringify(dbRecord));
+        }
+
+        localStorage.setItem('aktifKullanici', newName);
+        localStorage.setItem(newKey + 'email', newEmail);
+        localStorage.setItem(newKey + 'password', newPass);
+
+        const saveBtn = document.querySelector('.save-btn');
+        saveBtn.innerText = "Kaydedildi ✔";
+        saveBtn.style.backgroundColor = "#10b981";
+        
+        setTimeout(() => { location.reload(); }, 1500);
+    }
+
+    function loadAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                document.getElementById('avatar-img').src = base64Image;
+                localStorage.setItem(U_KEY + 'avatar', base64Image); 
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function togglePassword() {
+        const passInput = document.getElementById('input-password');
+        const btn = document.querySelector('.toggle-pass');
+        const eyeOpen = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        const eyeClosed = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+        if (passInput.type === "password") {
+            passInput.type = "text";
+            btn.innerHTML = eyeClosed;
+        } else {
+            passInput.type = "password";
+            btn.innerHTML = eyeOpen;
+        }
+    }
+</script>
+</script>
+</body>
+</html>
