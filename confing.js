@@ -1,1 +1,1 @@
-const API_URL = "https://biriken-api.onrender.com/api";
+const API_URL = "https://birikenbackend.onrender.com/api";
