@@ -84,6 +84,10 @@
     let currentUserId = getSafeData('userId', null);
     let userName = getSafeData('aktifKullanici', 'Misafir');
     let U_KEY = userName + "_";
+      
+      async function girisYap(event) {
+    event.preventDefault();
+    }
 
     document.addEventListener('DOMContentLoaded', async () => {
         if (!currentUserId) {
