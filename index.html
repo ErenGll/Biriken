@@ -121,11 +121,36 @@
         }
     }
 
-    async function girisYap(event) {
-    if (event) event.preventDefault(); // Sayfanın yenilenmesini durdurur
-    
-    console.log("Giriş denemesi başladı..."); 
-    // ... fetch kodların ...
+    // Örnek Giriş Fonksiyonu
+async function login(event) {
+    event.preventDefault(); // Sayfanın yenilenmesini durdurur
+
+    const usernameInput = document.getElementById('username').value;
+    const passwordInput = document.getElementById('password').value;
+
+    try {
+        const response = await fetch(`${API_URL}/Auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                Username: usernameInput,
+                Password: passwordInput
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert("Hoş geldin kanka!");
+            localStorage.setItem('userId', data.userId); // Giriş bilgisini sakla
+            window.location.href = "anasayfa.html"; // Yönlendir
+        } else {
+            const errorText = await response.text();
+            alert("Hata: " + errorText);
+        }
+    } catch (error) {
+        console.error("Bağlantı hatası:", error);
+        alert("Sunucuya bağlanamadı kanka. Render uyanıyor olabilir!");
+    }
 }
             const response = await fetch(`${API_URL}/Auth/login`, {
                 method: 'POST',
