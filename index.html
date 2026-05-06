@@ -121,13 +121,12 @@
         }
     }
 
-    // --- GİRİŞ YAPMA FONKSİYONU ---
     async function girisYap(event) {
-        event.preventDefault(); 
-        const usernameInput = document.getElementById('loginUser').value.trim();
-        const passwordInput = document.getElementById('loginPass').value.trim();
-
-        try {
+    if (event) event.preventDefault(); // Sayfanın yenilenmesini durdurur
+    
+    console.log("Giriş denemesi başladı..."); 
+    // ... fetch kodların ...
+}
             const response = await fetch(`${API_URL}/Auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
