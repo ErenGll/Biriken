@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -67,183 +66,142 @@
             </div>
         </div>
     </div>
-<script src="config.js"></script>
-<script src="script.js"></script>
-  <script>
-    const API_URL = "https://biriken-api.onrender.com/api";
 
-    // GÜVENLİK FİLTRESİ: Gerçekten boş mu yoksa "undefined" yazısı mı var kontrol eder
-    function getSafeData(key, fallback) {
-        let val = localStorage.getItem(key);
-        if (!val || val === "null" || val === "undefined" || val === "") {
-            return fallback;
+    <script>
+        // Global değişkenler
+        let userName = 'Misafir';
+        let U_KEY = 'Misafir_';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            userName = localStorage.getItem('aktifKullanici') || 'Misafir';
+            U_KEY = userName + "_";
+
+            // Verileri index.html'in kullandığı asıl kasadan (db_) çekiyoruz
+            let dbData = JSON.parse(localStorage.getItem('db_' + userName)) || { email: '', pass: '' };
+
+            const userEmail = dbData.email || localStorage.getItem(U_KEY + 'email') || '';
+            const userPass = dbData.pass || localStorage.getItem(U_KEY + 'password') || '';
+            const userAvatar = localStorage.getItem(U_KEY + 'avatar') || `https://ui-avatars.com/api/?name=${userName}&background=e2e8f0&color=1b2559`;
+
+            document.getElementById('input-name').value = userName;
+            document.getElementById('display-name').innerText = userName;
+            document.getElementById('input-email').value = userEmail;
+            document.getElementById('input-password').value = userPass;
+            document.getElementById('avatar-img').src = userAvatar;
+        });
+
+        // Fotoğraf yükleme işlemi
+        function loadAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Image = e.target.result;
+                    document.getElementById('avatar-img').src = base64Image;
+                    localStorage.setItem(U_KEY + 'avatar', base64Image); 
+                };
+                reader.readAsDataURL(file);
+            }
         }
-        return val;
+
+       // Şifre Göster/Gizle (İkonlu Versiyon)
+function togglePassword() {
+    const passInput = document.getElementById('input-password');
+    const btn = document.querySelector('.toggle-pass');
+    
+    // Açık Göz İkonu (Şifre gizliyken görünür)
+    const eyeOpen = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    
+    // Çizikli Kapalı Göz İkonu (Şifre açıkken görünür)
+    const eyeClosed = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+    if (passInput.type === "password") {
+        passInput.type = "text";
+        btn.innerHTML = eyeClosed; // Şifreyi görünür yapınca ikonu "çizikli göz" yap
+    } else {
+        passInput.type = "password";
+        btn.innerHTML = eyeOpen; // Şifreyi gizleyince ikonu "açık göz" yap
     }
+}
+        // Tüm profili ve Giriş Bilgilerini kaydet
+        function saveProfile() {
+            const newName = document.getElementById('input-name').value.trim();
+            const newEmail = document.getElementById('input-email').value.trim();
+            const newPass = document.getElementById('input-password').value.trim();
 
-    let currentUserId = getSafeData('userId', null);
-    let userName = getSafeData('aktifKullanici', 'Misafir');
-    let U_KEY = userName + "_";
-      
-      async function girisYap(event) {
-    event.preventDefault();
-    }
+            if (!newName) {
+                alert("Ad alanı boş bırakılamaz!");
+                return;
+            }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        if (!currentUserId) {
-            window.location.href = "index.html";
-            return;
-        }
+            const oldName = userName;
+            const oldKey = oldName + "_";
+            const newKey = newName + "_";
 
-        // Eski db_ kasasından veya normal hafızadan temiz veriyi al
-        let dbData = JSON.parse(localStorage.getItem('db_' + userName)) || {};
-        const userEmail = dbData.email || getSafeData(U_KEY + 'email', '');
-        const userPass = dbData.pass || getSafeData(U_KEY + 'password', '');
-        
-        const userAvatar = getSafeData(U_KEY + 'avatar', `https://ui-avatars.com/api/?name=${userName !== 'Misafir' ? userName : 'Kullanici'}&background=e2e8f0&color=1b2559`);
+            // 1. İNDEX.HTML İÇİN GİRİŞ KASASINI (db_) GÜNCELLE
+            let dbRecord = JSON.parse(localStorage.getItem('db_' + oldName)) || { user: oldName };
+            dbRecord.user = newName;
+            dbRecord.email = newEmail;
+            dbRecord.pass = newPass;
 
-        // Kutuları doldur (Eğer isim "Misafir" ise kutuyu boş bırak ki adam kendi adını yazabilsin)
-        document.getElementById('input-name').value = userName !== 'Misafir' ? userName : '';
-        document.getElementById('display-name').innerText = userName !== 'Misafir' ? userName : 'Kullanıcı';
-        document.getElementById('input-email').value = userEmail;
-        document.getElementById('input-password').value = userPass;
-        document.getElementById('avatar-img').src = userAvatar;
-
-        // SQL'den son teyidi al
-        await fetchUserProfile();
-    });
-
-    async function fetchUserProfile() {
-        try {
-            const response = await fetch(`${API_URL}/Auth/user/${currentUserId}`);
-            if (response.ok) {
-                const data = await response.json();
+            // Eğer kullanıcı adını değiştirdiyse
+            if (oldName !== newName) {
                 
-                // SQL'de "undefined" kelimesi kayıtlıysa onu da engelle
-                const sqlName = data.username || data.Username;
-                if (sqlName && sqlName !== "undefined" && sqlName !== "null") {
-                    document.getElementById('input-name').value = sqlName;
-                    document.getElementById('display-name').innerText = sqlName;
+                // A) Eski giriş kasasını sil, yeni isimle aç
+                localStorage.setItem('db_' + newName, JSON.stringify(dbRecord));
+                localStorage.removeItem('db_' + oldName);
+
+                // B) ÇOK ÖNEMLİ: Altınları, dövizleri ve geçmişi yeni isme transfer et! (Para kaybolmasın)
+                let keysToMigrate = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    let key = localStorage.key(i);
+                    if (key && key.startsWith(oldKey)) {
+                        keysToMigrate.push(key);
+                    }
                 }
                 
-                const sqlEmail = data.email || data.Email;
-                if (sqlEmail && sqlEmail !== "undefined" && sqlEmail !== "null") {
-                    document.getElementById('input-email').value = sqlEmail;
+                keysToMigrate.forEach(key => {
+                    let data = localStorage.getItem(key);
+                    let newDataKey = key.replace(oldKey, newKey);
+                    localStorage.setItem(newDataKey, data); // Yeni isme kopyala
+                    localStorage.removeItem(key); // Eskiyi sil
+                });
+
+                // C) Avatar güncellemesi (Adam kendi resmini koymadıysa harfleri yenile)
+                if (!localStorage.getItem(newKey + 'avatar') || localStorage.getItem(newKey + 'avatar').includes('ui-avatars')) {
+                    const newAvatar = `https://ui-avatars.com/api/?name=${newName}&background=e2e8f0&color=1b2559 &size=2048`;
+                    document.getElementById('avatar-img').src = newAvatar;
+                    localStorage.removeItem(newKey + 'avatar'); 
                 }
+
+            } else {
+                // Kullanıcı adı aynı, sadece şifre/email değiştiyse üstüne yaz
+                localStorage.setItem('db_' + oldName, JSON.stringify(dbRecord));
             }
-        } catch (error) {
-            console.warn("SQL'den güncel veriler alınamadı.");
+
+            // Aktif kullanıcıyı sisteme tanıt
+            localStorage.setItem('aktifKullanici', newName);
+            userName = newName;
+            U_KEY = newKey;
+
+            // Yedek olarak düz tut
+            localStorage.setItem(U_KEY + 'email', newEmail);
+            localStorage.setItem(U_KEY + 'password', newPass);
+
+            document.getElementById('display-name').innerText = newName;
+
+            // Görsel Kaydetme efekti
+            const saveBtn = document.querySelector('.save-btn');
+            saveBtn.innerText = "Kaydedildi ✔";
+            saveBtn.style.backgroundColor = "#10b981";
+            saveBtn.style.color = "#ffffff";
+            
+            setTimeout(() => {
+                saveBtn.innerText = "Değişiklikleri Kaydet";
+                saveBtn.style.backgroundColor = ""; 
+                saveBtn.style.color = ""; 
+            }, 2000);
         }
-    }
-
-    async function saveProfile() {
-        const newName = document.getElementById('input-name').value.trim();
-        const newEmail = document.getElementById('input-email').value.trim();
-        const newPass = document.getElementById('input-password').value.trim();
-
-        if (!newName) {
-            alert("Ad alanı boş bırakılamaz kanka!");
-            return;
-        }
-
-        // 1. KRİTİK KONTROL: ID gerçekten bir sayı mı?
-        let userIdNum = parseInt(currentUserId);
-        if (isNaN(userIdNum) || userIdNum <= 0) {
-            alert(`Sistem Hatası: ID numaran bozuk (${currentUserId}).\nLütfen çıkış yapıp tekrar giriş yap!`);
-            window.location.href = "index.html";
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/Auth/update/${userIdNum}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    id: userIdNum, 
-                    username: newName, 
-                    email: newEmail, 
-                    password: newPass 
-                })
-            });
-
-            if (!response.ok) {
-                const errTxt = await response.text();
-                alert(`Backend Hatası (404):\nSQL'de ID'si ${userIdNum} olan kullanıcı bulunamadı! Tarayıcı geçmişini temizle.`);
-                return; 
-            }
-        } catch (error) {
-            alert("Sunucuya bağlanılamadı! Backend (C#) açık mı?");
-            return; 
-        }
-
-        // Buralar senin o mükemmel bakiye taşıma kodların (Hiç dokunmadım)
-        const oldName = userName;
-        const newKey = newName + "_";
-
-        let dbRecord = JSON.parse(localStorage.getItem('db_' + oldName)) || { user: oldName };
-        dbRecord.user = newName;
-        dbRecord.email = newEmail;
-        dbRecord.pass = newPass;
-
-        if (oldName !== newName && oldName !== "Misafir" && oldName !== "undefined") {
-            localStorage.setItem('db_' + newName, JSON.stringify(dbRecord));
-            localStorage.removeItem('db_' + oldName);
-
-            let keysToMigrate = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                let key = localStorage.key(i);
-                if (key && key.startsWith(oldName + "_")) {
-                    keysToMigrate.push(key);
-                }
-            }
-            keysToMigrate.forEach(key => {
-                let data = localStorage.getItem(key);
-                localStorage.setItem(key.replace(oldName + "_", newKey), data); 
-                localStorage.removeItem(key); 
-            });
-        } else {
-            localStorage.setItem('db_' + newName, JSON.stringify(dbRecord));
-        }
-
-        localStorage.setItem('aktifKullanici', newName);
-        localStorage.setItem(newKey + 'email', newEmail);
-        localStorage.setItem(newKey + 'password', newPass);
-
-        const saveBtn = document.querySelector('.save-btn');
-        saveBtn.innerText = "Kaydedildi ✔";
-        saveBtn.style.backgroundColor = "#10b981";
-        
-        setTimeout(() => { location.reload(); }, 1500);
-    }
-
-    function loadAvatar(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Image = e.target.result;
-                document.getElementById('avatar-img').src = base64Image;
-                localStorage.setItem(U_KEY + 'avatar', base64Image); 
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function togglePassword() {
-        const passInput = document.getElementById('input-password');
-        const btn = document.querySelector('.toggle-pass');
-        const eyeOpen = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-        const eyeClosed = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
-
-        if (passInput.type === "password") {
-            passInput.type = "text";
-            btn.innerHTML = eyeClosed;
-        } else {
-            passInput.type = "password";
-            btn.innerHTML = eyeOpen;
-        }
-    }
-</script>
 </script>
 </body>
 </html>
