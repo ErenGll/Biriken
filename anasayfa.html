@@ -10,7 +10,6 @@
     if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark-theme');
     }
-    
     </script>
 </head>
 <body>
@@ -28,7 +27,7 @@
                         <strong id="nav-username"></strong>
                         <span>Biriken A.Ş.</span>
                     </div>
-                    <img src="https://ui-avatars.com/api/?name=Misafir&background=1b2559&color=fff" id="user-avatar" alt="User">
+                    <img src="" id="user-avatar" alt="User">
                     <svg class="logout-icon" onclick="event.stopPropagation(); cikisYap()" viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
                 </div>
             </div>
@@ -323,198 +322,253 @@
             </div>
             <div class="m-btns" style="margin-top: 20px;">
                 <button class="btn-c" onclick="closeAllTxModal()">Kapat</button>
+                <button class="btn-s" onclick="alert('PDF İndirme özelliği çok yakında aktif edilecek!')">PDF İndir</button>
             </div>
         </div>
     </div>
-<script src="config.js"></script>
-<script src="script.js"></script>
+
     <script>
-        // Eski Hali: const API_URL = "https://birikenbackend.onrender.com/api";
-// Yeni Hali:
-const API_URL = "https://biriken-api.onrender.com/api";
         const TARGET_LIMIT = 1000000;
-        let CANLI_KURLAR = { usd: 0, eur: 0, gbp: 0, gram: 0, ceyrek: 0, yarim: 0, tam: 0, ata: 0, gremse: 0, ons: 0, '22ayar': 0, '14ayar': 0 };
+        let CANLI_KURLAR = { usd: 32.45, eur: 35.12, gbp: 41.20, gram: 2452, ceyrek: 4150, yarim: 8300, tam: 16600, ata: 17000, gremse: 40000, ons: 2380, '22ayar': 2250, '14ayar': 1450 };
         
-        let user = localStorage.getItem('aktifKullanici') || 'Misafir'; 
-        let U_KEY = user + "_"; 
-        let currentUserId = localStorage.getItem('userId');
+        let user = 'Misafir'; 
+        let U_KEY = 'Misafir_'; // KİŞİYE ÖZEL KASA MÜHRÜ
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            if(document.getElementById('nav-username')) document.getElementById('nav-username').innerText = user;
-            if(document.getElementById('welcome-name')) document.getElementById('welcome-name').innerText = user;
+       // anasayfa.html script içinde DOMContentLoaded kısmını bul ve değiştir:
+
+    document.addEventListener('DOMContentLoaded', () => {
+        user = localStorage.getItem('aktifKullanici') || 'Misafir';
+        U_KEY = user + "_"; 
+        
+        document.getElementById('nav-username').innerText = user;
+        document.getElementById('welcome-name').innerText = user;
+        
+        const KEY = user + "_avatar"; 
+        const kaydedilenFoto = localStorage.getItem(KEY);
+        const profilResmi = document.getElementById('user-avatar');
+
+        if (kaydedilenFoto && profilResmi) {
+            profilResmi.src = kaydedilenFoto;
+        } else if (profilResmi) {
+            // BURAYA &size=512 EKLENDİ!
+            profilResmi.src = `https://ui-avatars.com/api/?name=${user}&background=1b2559&color=fff&size=1024`;
+        }
+        
+        updateUI(); 
+        renderTransactions(); 
+        piyasaVerileriniCek(); 
+        saatiGuncelle();
+    });
+
+        function showToast(message, type = 'info') {
+            let container = document.getElementById('toast-container');
+            if (!container) { container = document.createElement('div'); container.id = 'toast-container'; document.body.appendChild(container); }
+            const toast = document.createElement('div'); toast.className = `toast toast-${type}`; toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => container.removeChild(toast), 300); }, 3000);
+        }
+
+        function openM(type) {
+            const m = document.getElementById('m-root'); const body = document.getElementById('m-body');
+            m.style.display = 'flex';
+            let content = `<input type="hidden" id="m-type" value="${type}">`;
+            if (type.startsWith('gold')) {
+                document.getElementById('m-title').innerText = type.includes('add') ? "Altın Ekle" : "Altın Çıkar";
+                content += `<select class="m-input" id="g-select"><option value="gram">Gram</option><option value="ceyrek">Çeyrek</option><option value="yarim">Yarım</option><option value="tam">Tam</option><option value="ata">Ata</option><option value="gremse">Gremse</option><option value="ons">Ons</option><option value="22ayar">22 Ayar</option><option value="14ayar">14 Ayar</option></select>`;
+            } else {
+                document.getElementById('m-title').innerText = type.includes('add') ? "Döviz Ekle" : "Döviz Çıkar";
+                content += `<select class="m-input" id="c-select"><option value="USD">Dolar ($)</option><option value="EUR">Euro (€)</option><option value="GBP">Sterlin (£)</option></select>`;
+            }
+            content += `<input type="number" id="m-val" class="m-input" placeholder="Miktar..." step="0.01">`;
+            body.innerHTML = content;
+            document.getElementById('m-save').onclick = () => saveProcess(type);
+        }
+
+        function saveProcess(type) {
+            const val = parseFloat(document.getElementById('m-val').value);
+            if (!val || val <= 0) return;
+            let isAdd = type.includes('add');
+            let subType = type.startsWith('gold') ? document.getElementById('g-select').value : document.getElementById('c-select').value;
             
-            const kaydedilenFoto = localStorage.getItem(U_KEY + "avatar");
-            const profilResmi = document.getElementById('user-avatar');
-            if (profilResmi) {
-                profilResmi.src = kaydedilenFoto ? kaydedilenFoto : `https://ui-avatars.com/api/?name=${user}&background=1b2559&color=fff`;
-            }
+            // KİŞİYE ÖZEL KAYIT: U_KEY ekledik!
+            let lsKey = type.startsWith('gold') ? `${U_KEY}b_gold_${subType}` : `${U_KEY}b_curr_${subType}`;
+            
+            let cur = parseFloat(localStorage.getItem(lsKey)) || 0;
+            let next = isAdd ? cur + val : cur - val;
+            if (next < 0) { showToast("Yetersiz bakiye!", "error"); return; }
+            
+            localStorage.setItem(lsKey, next);
+            logTransaction(type, subType, val, isAdd);
+            document.getElementById('m-root').style.display = 'none'; 
+            updateUI(); 
+            renderTransactions();
+            showToast("İşlem başarıyla kaydedildi.", "success");
+        }
+        function updateUI() {
+            // VERİLERİ KİŞİYE ÖZEL (U_KEY) ÇEKİYORUZ
+            const g = { 
+                gram: parseFloat(localStorage.getItem(`${U_KEY}b_gold_gram`))||0, 
+                ceyrek: parseFloat(localStorage.getItem(`${U_KEY}b_gold_ceyrek`))||0, 
+                yarim: parseFloat(localStorage.getItem(`${U_KEY}b_gold_yarim`))||0, 
+                tam: parseFloat(localStorage.getItem(`${U_KEY}b_gold_tam`))||0, 
+                ata: parseFloat(localStorage.getItem(`${U_KEY}b_gold_ata`))||0, 
+                gremse: parseFloat(localStorage.getItem(`${U_KEY}b_gold_gremse`))||0, 
+                ons: parseFloat(localStorage.getItem(`${U_KEY}b_gold_ons`))||0, 
+                '22ayar': parseFloat(localStorage.getItem(`${U_KEY}b_gold_22ayar`))||0, 
+                '14ayar': parseFloat(localStorage.getItem(`${U_KEY}b_gold_14ayar`))||0 
+            };
+            const c = { 
+                usd: parseFloat(localStorage.getItem(`${U_KEY}b_curr_USD`))||0, 
+                eur: parseFloat(localStorage.getItem(`${U_KEY}b_curr_EUR`))||0, 
+                gbp: parseFloat(localStorage.getItem(`${U_KEY}b_curr_GBP`))||0 
+            };
 
-            await piyasaVerileriniCek(); 
-            renderTransactions(); 
-            saatiGuncelle();
-            setInterval(saatiGuncelle, 1000);
-            setInterval(piyasaVerileriniCek, 60000);
-        });
+            const gTL = (g.gram*CANLI_KURLAR.gram)+(g.ceyrek*CANLI_KURLAR.ceyrek)+(g.yarim*CANLI_KURLAR.yarim)+(g.tam*CANLI_KURLAR.tam)+(g.ata*CANLI_KURLAR.ata)+(g.gremse*CANLI_KURLAR.gremse)+(g.ons*CANLI_KURLAR.ons)+(g['22ayar']*CANLI_KURLAR['22ayar'])+(g['14ayar']*CANLI_KURLAR['14ayar']);
+            const cTL = (c.usd*CANLI_KURLAR.usd)+(c.eur*CANLI_KURLAR.eur)+(c.gbp*CANLI_KURLAR.gbp);
+            const total = gTL + cTL;
 
-        async function manuelYenile() {
-            const icon = document.getElementById('refresh-icon');
-            if (icon) {
-                icon.style.transition = "transform 0.6s ease-in-out";
-                icon.style.transform = "rotate(360deg)";
-            }
-            await piyasaVerileriniCek();
-            setTimeout(() => {
-                if (icon) {
-                    icon.style.transition = "none";
-                    icon.style.transform = "rotate(0deg)";
+            document.getElementById('goldTL').innerText = Math.round(gTL).toLocaleString('tr-TR') + " TL";
+            document.getElementById('currTL').innerText = Math.round(cTL).toLocaleString('tr-TR') + " TL";
+            document.getElementById('totalBalance').innerText = Math.round(total).toLocaleString('tr-TR') + " TL";
+            
+            if(document.getElementById('g-gram')) document.getElementById('g-gram').innerText = g.gram.toFixed(2) + " gr";
+            if(document.getElementById('g-ceyrek')) document.getElementById('g-ceyrek').innerText = g.ceyrek + " Adet";
+            if(document.getElementById('g-yarim')) document.getElementById('g-yarim').innerText = g.yarim + " Adet";
+            if(document.getElementById('g-tam')) document.getElementById('g-tam').innerText = g.tam + " Adet";
+            if(document.getElementById('g-ata')) document.getElementById('g-ata').innerText = g.ata + " Adet";
+            if(document.getElementById('g-gremse')) document.getElementById('g-gremse').innerText = g.gremse + " Adet";
+            if(document.getElementById('g-ons')) document.getElementById('g-ons').innerText = g.ons + " Adet";
+            if(document.getElementById('g-22ayar')) document.getElementById('g-22ayar').innerText = g['22ayar'].toFixed(2) + " gr";
+            if(document.getElementById('g-14ayar')) document.getElementById('g-14ayar').innerText = g['14ayar'].toFixed(2) + " gr";
+
+            if(document.getElementById('v-usd')) document.getElementById('v-usd').innerText = c.usd.toLocaleString() + " $";
+            if(document.getElementById('v-eur')) document.getElementById('v-eur').innerText = c.eur.toLocaleString() + " €";
+            if(document.getElementById('v-gbp')) document.getElementById('v-gbp').innerText = c.gbp.toLocaleString() + " £";
+
+            // 1. ANA PORTFÖY BARI
+            const perc = Math.min((total / TARGET_LIMIT) * 100, 100);
+            if(document.getElementById('totalBar')) document.getElementById('totalBar').style.width = perc + "%";
+            if(document.getElementById('totalPercentText')) document.getElementById('totalPercentText').innerText = "%" + Math.round(perc);
+
+            // 2. ALTIN BARI (Hedefe Göre Renkli Dolum)
+            let tG = TARGET_LIMIT; 
+            let s1 = (g.gram * CANLI_KURLAR.gram / tG) * 100;
+            let s2 = s1 + ((g.ceyrek * CANLI_KURLAR.ceyrek / tG) * 100);
+            let s3 = s2 + ((g.yarim * CANLI_KURLAR.yarim / tG) * 100);
+            let s4 = s3 + ((g.tam * CANLI_KURLAR.tam / tG) * 100);
+            let s5 = s4 + ((g.ata * CANLI_KURLAR.ata / tG) * 100);
+            let s6 = s5 + ((g.gremse * CANLI_KURLAR.gremse / tG) * 100);
+            let s7 = s6 + ((g.ons * CANLI_KURLAR.ons / tG) * 100);
+            let s8 = s7 + ((g['22ayar'] * CANLI_KURLAR['22ayar'] / tG) * 100);
+            let s9 = s8 + ((g['14ayar'] * CANLI_KURLAR['14ayar'] / tG) * 100);
+            
+            let goldFill = Math.min(s9, 100);
+            if(document.getElementById('goldPercText')) document.getElementById('goldPercText').innerText = "%" + Math.round(goldFill) + " Doluluk";
+
+            const goldChart = document.getElementById('goldChart');
+            if (goldChart) {
+                if (gTL > 0) {
+                    goldChart.style.background = `conic-gradient(var(--gold-gram) 0% ${s1}%, var(--gold-ceyrek) ${s1}% ${s2}%, var(--gold-yarim) ${s2}% ${s3}%, var(--gold-tam) ${s3}% ${s4}%, #f59e0b ${s4}% ${s5}%, #d97706 ${s5}% ${s6}%, #b45309 ${s6}% ${s7}%, #78350f ${s7}% ${s8}%, #fcd34d ${s8}% ${s9}%, var(--chart-empty) ${s9}% 100%)`;
+                } else {
+                    goldChart.style.background = "var(--chart-empty)";
                 }
-            }, 600);
+            }
+
+            // 3. DÖVİZ BARI (Hedefe Göre Renkli Dolum)
+            let cs1 = (c.usd * CANLI_KURLAR.usd / tG) * 100;
+            let cs2 = cs1 + ((c.eur * CANLI_KURLAR.eur / tG) * 100);
+            let cs3 = cs2 + ((c.gbp * CANLI_KURLAR.gbp / tG) * 100);
+            
+            let currFill = Math.min(cs3, 100);
+            if(document.getElementById('currPercText')) document.getElementById('currPercText').innerText = "%" + Math.round(currFill) + " Doluluk";
+
+            const currChart = document.getElementById('currChart');
+            if (currChart) {
+                if (cTL > 0) {
+                    currChart.style.background = `conic-gradient(var(--chart2-light) 0% ${cs1}%, var(--chart2-mid) ${cs1}% ${cs2}%, var(--chart2-dark) ${cs2}% ${cs3}%, var(--chart-empty) ${cs3}% 100%)`;
+                } else {
+                    currChart.style.background = "var(--chart-empty)";
+                }
+            }
         }
 
         async function piyasaVerileriniCek() {
             try {
-                const res = await fetch('https://finans.truncgil.com/v3/today.json');
-                const data = await res.json();
-                const parse = (s) => {
-                    if(!s) return 0;
-                    let clean = s.replace(/\./g, '').replace(',', '.');
-                    return parseFloat(clean) || 0;
-                };
-
-                CANLI_KURLAR = {
-                    usd: parse(data['USD']?.Selling),
-                    eur: parse(data['EUR']?.Selling),
-                    gbp: parse(data['GBP']?.Selling),
-                    gram: parse(data['gram-altin']?.Selling),
-                    ceyrek: parse(data['ceyrek-altin']?.Selling),
-                    yarim: parse(data['yarim-altin']?.Selling),
-                    tam: parse(data['tam-altin']?.Selling),
-                    ata: parse(data['cumhuriyet-altini']?.Selling || data['ata-altin']?.Selling),
-                    gremse: parse(data['gremse-altin']?.Selling),
-                    ons: parse(data['ons']?.Selling),
-                    '22ayar': parse(data['22-ayar-bilezik']?.Selling),
-                    '14ayar': parse(data['14-ayar-altin']?.Selling)
-                };
-
-                const setVal = (id, val) => { if(document.getElementById(id)) document.getElementById(id).innerText = val ? val : "0,00"; };
+                const resLocal = await fetch('https://finans.truncgil.com/v3/today.json');
+                const dataLocal = await resLocal.json();
                 
-                setVal('val-usd', data['USD']?.Selling);
-                setVal('val-eur', data['EUR']?.Selling);
-                setVal('val-gbp', data['GBP']?.Selling);
-                setVal('val-gr', data['gram-altin']?.Selling);
-                setVal('val-ceyrek', data['ceyrek-altin']?.Selling);
-                setVal('val-yarim', data['yarim-altin']?.Selling);
-                setVal('val-tam', data['tam-altin']?.Selling);
-                setVal('val-ata', (data['cumhuriyet-altini']?.Selling || data['ata-altin']?.Selling));
-                setVal('val-gremse', data['gremse-altin']?.Selling);
-                setVal('val-ons', data['ons']?.Selling);
-                setVal('val-22ayar', data['22-ayar-bilezik']?.Selling);
-                setVal('val-14ayar', data['14-ayar-altin']?.Selling);
-
-                updateUI(); 
-            } catch (e) { console.error("Kurlar çekilemedi."); }
-        }
-
-        function updateUI() {
-            const getV = (k) => { let v = localStorage.getItem(U_KEY + "b_gold_" + k); return (v === null || isNaN(v)) ? 0 : parseFloat(v); };
-            const getC = (k) => { let v = localStorage.getItem(U_KEY + "b_curr_" + k); return (v === null || isNaN(v)) ? 0 : parseFloat(v); };
-
-            const g = { gram:getV('gram'), ceyrek:getV('ceyrek'), yarim:getV('yarim'), tam:getV('tam'), ata:getV('ata'), gremse:getV('gremse'), ons:getV('ons'), '22ayar':getV('22ayar'), '14ayar':getV('14ayar') };
-            const c = { usd:getC('USD'), eur:getC('EUR'), gbp:getC('GBP') };
-
-            const sk = (v) => (v && !isNaN(v)) ? v : 0;
-
-            const gTL = (g.gram*sk(CANLI_KURLAR.gram))+(g.ceyrek*sk(CANLI_KURLAR.ceyrek))+(g.yarim*sk(CANLI_KURLAR.yarim))+(g.tam*sk(CANLI_KURLAR.tam))+(g.ata*sk(CANLI_KURLAR.ata))+(g.gremse*sk(CANLI_KURLAR.gremse))+(g.ons*sk(CANLI_KURLAR.ons))+(g['22ayar']*sk(CANLI_KURLAR['22ayar']))+(g['14ayar']*sk(CANLI_KURLAR['14ayar']));
-            const cTL = (c.usd*sk(CANLI_KURLAR.usd))+(c.eur*sk(CANLI_KURLAR.eur))+(c.gbp*sk(CANLI_KURLAR.gbp));
-            const total = gTL + cTL;
-
-            const setT = (id, txt) => { if(document.getElementById(id)) document.getElementById(id).innerText = txt; };
-            const fmt = (v) => isNaN(v) ? "0 TL" : Math.round(v).toLocaleString('tr-TR') + " TL";
-
-            setT('goldTL', fmt(gTL));
-            setT('currTL', fmt(cTL));
-            setT('totalBalance', fmt(total));
-
-            setT('g-gram', g.gram.toFixed(2) + " gr");
-            setT('g-ceyrek', g.ceyrek + " Adet");
-            setT('g-yarim', g.yarim + " Adet");
-            setT('g-tam', g.tam + " Adet");
-            setT('g-ata', g.ata + " Adet");
-            setT('g-gremse', g.gremse + " Adet");
-            setT('g-ons', g.ons + " Adet");
-            setT('g-22ayar', g['22ayar'].toFixed(2) + " gr");
-            setT('g-14ayar', g['14ayar'].toFixed(2) + " gr");
-            setT('v-usd', c.usd.toLocaleString() + " $");
-            setT('v-eur', c.eur.toLocaleString() + " €");
-            setT('v-gbp', c.gbp.toLocaleString() + " £");
-
-            const totalP = Math.min((total / TARGET_LIMIT) * 100, 100);
-            if(document.getElementById('totalBar')) document.getElementById('totalBar').style.width = totalP + "%";
-            setT('totalPercentText', "%" + Math.round(totalP));
-
-            let s1 = (g.gram * sk(CANLI_KURLAR.gram) / TARGET_LIMIT) * 100;
-            let s2 = s1 + (g.ceyrek * sk(CANLI_KURLAR.ceyrek) / TARGET_LIMIT) * 100;
-            let s3 = s2 + (g.yarim * sk(CANLI_KURLAR.yarim) / TARGET_LIMIT) * 100;
-            let s4 = s3 + (g.tam * sk(CANLI_KURLAR.tam) / TARGET_LIMIT) * 100;
-            let gTotal = s4 + (((g.ata+g.gremse+g.ons+g['22ayar']+g['14ayar']) * sk(CANLI_KURLAR.gram) / TARGET_LIMIT) * 100);
-            
-            const goldC = document.getElementById('goldChart');
-            if(goldC) goldC.style.background = gTL > 0 ? `conic-gradient(var(--gold-gram) 0% ${s1}%, var(--gold-ceyrek) ${s1}% ${s2}%, var(--gold-yarim) ${s2}% ${s3}%, var(--gold-tam) ${s3}% ${s4}%, #f59e0b ${s4}% ${gTotal}%, var(--chart-empty) ${gTotal}% 100%)` : "var(--chart-empty)";
-            setT('goldPercText', "%" + Math.round(Math.min(gTotal, 100)) + " Doluluk");
-
-            let cs1 = (c.usd * sk(CANLI_KURLAR.usd) / TARGET_LIMIT) * 100;
-            let cs2 = cs1 + (c.eur * sk(CANLI_KURLAR.eur) / TARGET_LIMIT) * 100;
-            let cs3 = cs2 + (c.gbp * sk(CANLI_KURLAR.gbp) / TARGET_LIMIT) * 100;
-            
-            const currC = document.getElementById('currChart');
-            if(currC) currC.style.background = cTL > 0 ? `conic-gradient(var(--chart2-light) 0% ${cs1}%, var(--chart2-mid) ${cs1}% ${cs2}%, var(--chart2-dark) ${cs2}% ${cs3}%, var(--chart-empty) ${cs3}% 100%)` : "var(--chart-empty)";
-            setT('currPercText', "%" + Math.round(Math.min(cs3, 100)) + " Doluluk");
-        }
-
-        async function saveProcess(type) {
-            const val = parseFloat(document.getElementById('m-val').value);
-            if (!val || val <= 0) return;
-            
-            let isAdd = type.includes('add');
-            let subType = type.startsWith('gold') ? document.getElementById('g-select').value : document.getElementById('c-select').value;
-            let mainType = type.startsWith('gold') ? "Altın" : "Döviz";
-            
-            let subK = subType.toLowerCase().replace(" ", "");
-            let lsK = type.startsWith('gold') ? `${U_KEY}b_gold_${subK}` : `${U_KEY}b_curr_${subType}`;
-            
-            let cur = parseFloat(localStorage.getItem(lsK)) || 0;
-            let next = isAdd ? cur + val : cur - val;
-            if (next < 0) { showToast("Yetersiz bakiye!", "error"); return; }
-            
-            localStorage.setItem(lsK, next);
-            logTransaction(type, subType, val, isAdd);
-
-            if (currentUserId) {
+                let globalOnsPrice = 0;
                 try {
-                    await fetch(`${API_URL}/Transaction/add`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: parseInt(currentUserId), type: mainType, subType: subType, amount: val, isAdd: isAdd })
-                    });
-                } catch (e) { console.warn("Bulut senkronizasyonu yapılamadı."); }
+                    const resGlobal = await fetch('https://api.gold-api.com/price/XAU');
+                    const dataGlobal = await resGlobal.json();
+                    globalOnsPrice = parseFloat(dataGlobal.price); 
+                } catch(e) { console.warn("Gold-API'den Ons çekilemedi."); }
+
+                const parse = (s) => parseFloat(s.replace(/\./g, '').replace(',', '.'));
+
+                document.getElementById('val-usd').innerText = dataLocal['USD'].Selling;
+                document.getElementById('val-eur').innerText = dataLocal['EUR'].Selling;
+                document.getElementById('val-gbp').innerText = dataLocal['GBP'].Selling;
+                document.getElementById('val-gr').innerText = dataLocal['gram-altin'].Selling;
+                document.getElementById('val-ceyrek').innerText = dataLocal['ceyrek-altin'].Selling;
+                document.getElementById('val-yarim').innerText = dataLocal['yarim-altin'].Selling;
+                document.getElementById('val-tam').innerText = dataLocal['tam-altin'].Selling;
+                document.getElementById('val-ata').innerText = dataLocal['cumhuriyet-altini'] ? dataLocal['cumhuriyet-altini'].Selling : dataLocal['ata-altin'].Selling;
+                document.getElementById('val-gremse').innerText = dataLocal['gremse-altin'].Selling;
+                document.getElementById('val-22ayar').innerText = dataLocal['22-ayar-bilezik'].Selling;
+                document.getElementById('val-14ayar').innerText = dataLocal['14-ayar-altin'].Selling;
+
+                if (globalOnsPrice > 0) {
+                    document.getElementById('val-ons').innerText = "$" + globalOnsPrice.toFixed(2);
+                    CANLI_KURLAR.ons = globalOnsPrice; 
+                } else {
+                    document.getElementById('val-ons').innerText = dataLocal['ons'].Selling;
+                    CANLI_KURLAR.ons = parse(dataLocal['ons'].Selling);
+                }
+
+                CANLI_KURLAR.usd = parse(dataLocal['USD'].Selling);
+                CANLI_KURLAR.eur = parse(dataLocal['EUR'].Selling);
+                CANLI_KURLAR.gbp = parse(dataLocal['GBP'].Selling);
+                CANLI_KURLAR.gram = parse(dataLocal['gram-altin'].Selling);
+                CANLI_KURLAR.ceyrek = parse(dataLocal['ceyrek-altin'].Selling);
+                CANLI_KURLAR.yarim = parse(dataLocal['yarim-altin'].Selling);
+                CANLI_KURLAR.tam = parse(dataLocal['tam-altin'].Selling);
+                CANLI_KURLAR.ata = parse(dataLocal['cumhuriyet-altini'] ? dataLocal['cumhuriyet-altini'].Selling : dataLocal['ata-altin'].Selling);
+                CANLI_KURLAR.gremse = parse(dataLocal['gremse-altin'].Selling);
+                CANLI_KURLAR['22ayar'] = parse(dataLocal['22-ayar-bilezik'].Selling);
+                CANLI_KURLAR['14ayar'] = parse(dataLocal['14-ayar-altin'].Selling);
+
+                updateUI();
+            } catch (e) { 
+                console.error("Kurlar gelmedi"); 
+                showToast("Piyasa verileri güncellenemedi.", "error");
             }
-
-            closeM();
-            updateUI(); 
-            renderTransactions();
-            showToast("İşlem kaydedildi.", "success");
         }
 
+        function saatiGuncelle() {
+            const s = new Date();
+            document.getElementById('live-time').innerText = s.toLocaleTimeString('tr-TR');
+            document.getElementById('live-date').innerText = s.toLocaleDateString('tr-TR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        }
+        setInterval(saatiGuncelle, 1000);
+        
+        function closeM() { document.getElementById('m-root').style.display='none'; }
+        function closeAllTxModal() { document.getElementById('tx-modal-root').style.display='none'; }
+        function openAllTxModal() { document.getElementById('tx-modal-root').style.display='flex'; renderTransactions(true); }
+        function cikisYap() { localStorage.removeItem('aktifKullanici'); window.location.href="index.html"; }
+        
         function logTransaction(t, s, a, i) {
-            let txs = JSON.parse(localStorage.getItem(U_KEY + "b_transactions")) || [];
+            // İŞLEMLER DE KİŞİYE ÖZEL OLDU
+            let txs = JSON.parse(localStorage.getItem(`${U_KEY}b_transactions`)) || [];
             txs.unshift({ day: new Date().getDate(), month: "Nis", title: t.startsWith('gold') ? "Altın":"Döviz", desc: s + (i?" Eklendi":" Çıkarıldı"), amountStr: (i?"+":"-")+a, isAdd: i });
-            localStorage.setItem(U_KEY + "b_transactions", JSON.stringify(txs.slice(0, 50)));
+            localStorage.setItem(`${U_KEY}b_transactions`, JSON.stringify(txs.slice(0, 50)));
         }
-
+        
         function renderTransactions(all = false) {
             const container = all ? document.getElementById('tx-m-body') : document.getElementById('tx-container');
-            if(!container) return;
-            let txs = JSON.parse(localStorage.getItem(U_KEY + "b_transactions")) || [];
+            // İŞLEMLERİ OKURKEN DE KİŞİYE ÖZEL
+            let txs = JSON.parse(localStorage.getItem(`${U_KEY}b_transactions`)) || [];
             if (!txs.length) { container.innerHTML = '<div class="tx-empty">İşlem yok.</div>'; return; }
             container.innerHTML = "";
             (all ? txs : txs.slice(0, 4)).forEach(tx => {
@@ -522,54 +576,9 @@ const API_URL = "https://biriken-api.onrender.com/api";
             });
         }
 
-        function openAllTxModal() {
-            const m = document.getElementById('tx-modal-root');
-            if(m) {
-                m.style.display = 'flex';
-                renderTransactions(true); 
-            }
-        }
-
-        function closeAllTxModal() { 
-            const m = document.getElementById('tx-modal-root');
-            if(m) m.style.display='none'; 
-        }
-
-        function openM(type) {
-            const m = document.getElementById('m-root');
-            if(!m) return;
-            m.style.display = 'flex';
-            let isG = type.startsWith('gold');
-            document.getElementById('m-title').innerText = isG ? (type.includes('add') ? "Altın Ekle" : "Altın Çıkar") : (type.includes('add') ? "Döviz Ekle" : "Döviz Çıkar");
-            let content = `<input type="hidden" id="m-type" value="${type}">`;
-            content += isG ? `<select class="m-input" id="g-select"><option value="Gram">Gram</option><option value="Çeyrek">Çeyrek</option><option value="Yarım">Yarım</option><option value="Tam">Tam</option><option value="Ata">Ata</option><option value="Gremse">Gremse</option><option value="Ons">Ons</option><option value="22 Ayar">22 Ayar</option><option value="14 Ayar">14 Ayar</option></select>` : `<select class="m-input" id="c-select"><option value="USD">Dolar ($)</option><option value="EUR">Euro (€)</option><option value="GBP">Sterlin (£)</option></select>`;
-            content += `<input type="number" id="m-val" class="m-input" placeholder="Miktar..." step="0.01">`;
-            document.getElementById('m-body').innerHTML = content;
-            document.getElementById('m-save').onclick = () => saveProcess(type);
-        }
-        
-        function closeM() { if(document.getElementById('m-root')) document.getElementById('m-root').style.display='none'; }
-        
-        function saatiGuncelle() {
-            const s = new Date();
-            const tE = document.getElementById('live-time');
-            const dE = document.getElementById('live-date');
-            if(tE) tE.innerText = s.toLocaleTimeString('tr-TR');
-            if(dE) dE.innerText = s.toLocaleDateString('tr-TR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-        }
-
-        function showToast(message, type) {
-            let c = document.getElementById('toast-container') || (()=>{const x=document.createElement('div');x.id='toast-container';document.body.appendChild(x);return x;})();
-            const t = document.createElement('div'); t.className = `toast toast-${type}`; t.innerText = message;
-            c.appendChild(t);
-            setTimeout(() => t.classList.add('show'), 10);
-            setTimeout(() => { t.classList.remove('show'); setTimeout(() => c.removeChild(t), 300); }, 3000);
-        }
-
-        function cikisYap() { 
-            localStorage.removeItem('aktifKullanici'); 
-            localStorage.removeItem('userId'); 
-            window.location.href="index.html"; 
+        async function manuelYenile() {
+            const icon = document.getElementById('refresh-icon'); icon.style.transition = "0.6s"; icon.style.transform = "rotate(360deg)";
+            await piyasaVerileriniCek(); setTimeout(() => { icon.style.transition = "none"; icon.style.transform = "rotate(0deg)"; }, 600);
         }
     </script>
 </body>
