@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biriken - Giriş Sistemi</title>
-    <link rel="icon" type="image/jpeg" href="WhatsApp Image 2026-04-15 at 11.48.33.jpeg">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpeg"> <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -13,16 +12,13 @@
 
     <div id="loginCard">
         <div class="header-shape">
-            <img src="WhatsApp Image 2026-04-15 at 11.48.33.jpeg" alt="Logo" class="login-logo">
+            <img src="logo.jpeg" alt="Logo" class="login-logo">
         </div>
         <div class="content">
             <h2 class="title">Biriken</h2>
             <p class="subtitle">Varlıklarını güvenle takip et</p>
             <div class="form-container">
-                <!-- GİRİŞ FORMU -->
-                <form id="loginForm" onsubmit="girisYap(event)">
-                    <div class="input-wrapper">
-                        <!-- BURASI ARTIK KULLANICI ADI ALIYOR -->
+                <form id="loginForm" onsubmit="return false;"> <div class="input-wrapper">
                         <input type="text" id="loginUser" placeholder="Kullanıcı Adı" required>
                     </div>
                     <div class="input-wrapper">
@@ -30,32 +26,30 @@
                     </div>
                     <div class="form-links">
                         <a href="javascript:void(0)" onclick="openModal('forgotModal')">Şifremi Unuttum</a>
-                        <a href="javascript:void(0)" onclick="openModal('registerModal')" class="highlight">Hesap Oluştur</a>
+                        <a href="javascript:void(0)" onclick="openModal('registerModal')" class="highlight" style="cursor: pointer; font-weight: bold;">Hesap Oluştur</a>
                     </div>
-                    <button type="submit" class="btn-primary">Giriş Yap</button>
+                    <button type="button" onclick="girisYap(event)" class="btn-primary">Giriş Yap</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- KAYIT MODAL -->
     <div id="registerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Yeni Hesap Oluştur</h3>
                 <span class="close-btn" onclick="closeModals()">&times;</span>
             </div>
-            <form id="regForm" onsubmit="kayitOl(event)">
+            <form id="regForm" onsubmit="return false;">
                 <input type="text" id="regUser" placeholder="Kullanıcı Adı" minlength="3" required>
                 <input type="email" id="regEmail" placeholder="E-posta" required>
                 <input type="password" id="regPass" placeholder="Şifre (8+ karakter)" minlength="8" required>
                 <input type="password" id="regConfirm" placeholder="Şifre Tekrar" required>
-                <button type="submit" class="btn-primary">Kaydı Tamamla</button>
+                <button type="button" onclick="kayitOl(event)" class="btn-primary">Kaydı Tamamla</button>
             </form>
         </div>
     </div>
 
-    <!-- ŞİFRE UNUTTUM MODAL -->
     <div id="forgotModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -66,35 +60,45 @@
                 <p class="sub-text">Kayıtlı bilgilerinizi girin</p>
                 <input type="text" id="forgetName" placeholder="Kullanıcı Adı" required>
                 <input type="email" id="forgetEmail" placeholder="E-posta" required>
-                <button onclick="verifyUser()" class="btn-primary">Sorgula</button>
+                <button type="button" onclick="verifyUser()" class="btn-primary">Sorgula</button>
             </div>
             <div id="step2" style="display: none;">
                 <p class="sub-text">Yeni şifrenizi belirleyin</p>
                 <input type="password" id="newPass" placeholder="Yeni Şifre" minlength="8" required>
-                <button onclick="saveNewPassword()" class="btn-success">Güncelle</button>
+                <button type="button" onclick="saveNewPassword()" class="btn-success">Güncelle</button>
             </div>
         </div>
     </div>
+
 <script src="config.js"></script>
-<script src="script.js"></script>
+
 <script>
-    // 1. ADIM: Render adresini buraya yapıştırıyoruz!
-    const API_URL = "https://biriken-api.onrender.com/api"; 
+    // Eğer config.js'den gelmiyorsa adresi buradan alıyoruz
+    if (typeof API_URL === 'undefined') {
+        var API_URL = "https://birikenbackend.onrender.com/api";
+    }
+
+    // Modal açma-kapama
+    function openModal(modalId) {
+        console.log(modalId + " modalı açılıyor...");
+        document.getElementById(modalId).style.display = "flex";
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal').forEach(m => m.style.display = "none");
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         const currentUserId = localStorage.getItem('userId');
-        // Eğer kullanıcı zaten giriş yapmışsa direkt anasayfaya gönder
         if (currentUserId && currentUserId !== "null" && currentUserId !== "undefined") {
             window.location.href = "anasayfa.html";
         }
     });
 
-    function openModal(modalId) { document.getElementById(modalId).style.display = "flex"; }
-    function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
-
     // --- KAYIT OLMA FONKSİYONU ---
     async function kayitOl(event) {
-        event.preventDefault(); 
+        if (event) event.preventDefault();
+        
         const username = document.getElementById('regUser').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPass').value.trim();
@@ -103,6 +107,7 @@
         if(password !== confirm) { alert("Şifreler uyuşmuyor!"); return; }
 
         try {
+            console.log("Kayıt isteği gönderiliyor...");
             const response = await fetch(`${API_URL}/Auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -117,41 +122,25 @@
                 alert("Hata: " + errorText); 
             }
         } catch (error) { 
-            alert("Sunucuya bağlanılamadı! Render uyanıyor olabilir, 30 saniye sonra tekrar dene."); 
+            console.error("Kayıt Hatası:", error);
+            alert("Sunucuya bağlanılamadı!"); 
         }
     }
 
-    // Örnek Giriş Fonksiyonu
-async function login(event) {
-    event.preventDefault(); // Sayfanın yenilenmesini durdurur
+    // --- GİRİŞ YAPMA FONKSİYONU ---
+    async function girisYap(event) {
+        if (event) event.preventDefault();
+        
+        const usernameInput = document.getElementById('loginUser').value.trim();
+        const passwordInput = document.getElementById('loginPass').value.trim();
 
-    const usernameInput = document.getElementById('username').value;
-    const passwordInput = document.getElementById('password').value;
-
-    try {
-        const response = await fetch(`${API_URL}/Auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                Username: usernameInput,
-                Password: passwordInput
-            })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            alert("Hoş geldin kanka!");
-            localStorage.setItem('userId', data.userId); // Giriş bilgisini sakla
-            window.location.href = "anasayfa.html"; // Yönlendir
-        } else {
-            const errorText = await response.text();
-            alert("Hata: " + errorText);
+        if (!usernameInput || !passwordInput) {
+            alert("Lütfen tüm alanları doldurun!");
+            return;
         }
-    } catch (error) {
-        console.error("Bağlantı hatası:", error);
-        alert("Sunucuya bağlanamadı kanka. Render uyanıyor olabilir!");
-    }
-}
+
+        try {
+            console.log("Giriş denemesi yapılıyor: " + usernameInput);
             const response = await fetch(`${API_URL}/Auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -161,19 +150,19 @@ async function login(event) {
             if (response.ok) {
                 const data = await response.json();
                 
-                // Bilgileri tarayıcı hafızasına güvenli bir şekilde alıyoruz
+                // localStorage'a kaydediyoruz
                 localStorage.setItem('userId', data.userId); 
                 localStorage.setItem('aktifKullanici', data.username);
-                localStorage.setItem('userEmail', data.email);
-                localStorage.setItem('userPassword', passwordInput); 
-
+                
                 alert("Giriş yapıldı! Yönlendiriliyorsun...");
+                console.log("Yönlendirme yapılıyor: anasayfa.html");
                 window.location.href = "anasayfa.html";
             } else { 
-                alert("Giriş bilgileri hatalı veya kullanıcı bulunamadı!"); 
+                alert("Giriş bilgileri hatalı!"); 
             }
         } catch (error) { 
-            alert("Sunucuya bağlanılamadı! Render adresi doğru mu kontrol et."); 
+            console.error("Giriş Hatası:", error);
+            alert("Sunucuya bağlanılamadı! Render adresi kapalı olabilir."); 
         }
     }
 </script>
