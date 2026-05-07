@@ -1,207 +1,208 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/jpeg" href="WhatsApp Image 2026-04-15 at 11.48.33.jpeg">
-    <title>Profilim | Biriken Finans</title>
-    <link rel="stylesheet" href="profil.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-    if (localStorage.getItem('theme') === 'dark') {
-        document.documentElement.classList.add('dark-theme');
-    }
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="WhatsApp Image 2026-04-15 at 11.48.33.jpeg">
+    <title>Profilim | Biriken Finans</title>
+    <link rel="stylesheet" href="profil.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+    }
+    </script>
 </head>
 <body>
 
-    <div class="profile-container">
-        <div class="header-bar">
-            <button class="back-btn" onclick="window.history.back()">
-                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-                Geri Dön
-            </button>
-            <h2>Profil Ayarları</h2>
-            <div style="width: 100px;"></div> 
-        </div>
+    <div class="profile-container">
+        <div class="header-bar">
+            <button class="back-btn" onclick="window.history.back()">
+                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                Geri Dön
+            </button>
+            <h2>Profil Ayarları</h2>
+            <div style="width: 100px;"></div> 
+        </div>
 
-        <div class="profile-card">
-            <div class="avatar-section">
-                <div class="avatar-wrapper">
-                    <img id="avatar-img" src="" alt="Profil Fotoğrafı">
-                    <label for="avatar-upload" class="avatar-edit-btn">
-                        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.69l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                    </label>
-                    <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="loadAvatar(event)">
-                </div>
-                <h3 id="display-name">Yükleniyor...</h3>
-                <span>Biriken A.Ş. </span>
-            </div>
+        <div class="profile-card">
+            <div class="avatar-section">
+                <div class="avatar-wrapper">
+                    <img id="avatar-img" src="" alt="Profil Fotoğrafı">
+                    <label for="avatar-upload" class="avatar-edit-btn">
+                        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.69l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    </label>
+                    <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="loadAvatar(event)">
+                </div>
+                <h3 id="display-name">Yükleniyor...</h3>
+                <span>Biriken A.Ş. </span>
+            </div>
 
-            <div class="form-section">
-                <div class="input-group">
-                    <label>Ad Soyad</label>
-                    <input type="text" id="input-name" placeholder="Adınızı girin">
-                </div>
+            <div class="form-section">
+                <div class="input-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" id="input-name" placeholder="Adınızı girin">
+                </div>
 
-                <div class="input-group">
-                    <label>E-Posta Adresi</label>
-                    <input type="email" id="input-email" placeholder="ornek@biriken.com">
-                </div>
+                <div class="input-group">
+                    <label>E-Posta Adresi</label>
+                    <input type="email" id="input-email" placeholder="ornek@biriken.com">
+                </div>
 
-                <div class="input-group">
-                    <label>Şifre</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="input-password" placeholder="Yeni şifre belirleyin">
-                        <span class="toggle-pass" onclick="togglePassword()" style="cursor: pointer; display: flex; align-items: center; color: #64748b; transition: 0.3s;">
-    <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-        <circle cx="12" cy="12" r="3"></circle>
-    </svg>
+                <div class="input-group">
+                    <label>Şifre</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="input-password" placeholder="Yeni şifre belirleyin">
+                        <span class="toggle-pass" onclick="togglePassword()" style="cursor: pointer; display: flex; align-items: center; color: #64748b; transition: 0.3s;">
+    <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+    </svg>
 </span>
-                    </div>
-                </div>
+                    </div>
+                </div>
 
-                <button class="save-btn" onclick="saveProfile()">Değişiklikleri Kaydet</button>
-            </div>
-        </div>
-    </div>
+                <button class="save-btn" onclick="saveProfile()">Değişiklikleri Kaydet</button>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        // Global değişkenler
-        let userName = 'Misafir';
-        let U_KEY = 'Misafir_';
+    <script>
+        // Global değişkenler
+        let userName = 'Misafir';
+        let U_KEY = 'Misafir_';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            userName = localStorage.getItem('aktifKullanici') || 'Misafir';
-            U_KEY = userName + "_";
+        document.addEventListener('DOMContentLoaded', () => {
+            userName = localStorage.getItem('aktifKullanici') || 'Misafir';
+            U_KEY = userName + "_";
 
-            // Verileri index.html'in kullandığı asıl kasadan (db_) çekiyoruz
-            let dbData = JSON.parse(localStorage.getItem('db_' + userName)) || { email: '', pass: '' };
+            // Verileri index.html'in kullandığı asıl kasadan (db_) çekiyoruz
+            let dbData = JSON.parse(localStorage.getItem('db_' + userName)) || { email: '', pass: '' };
 
-            const userEmail = dbData.email || localStorage.getItem(U_KEY + 'email') || '';
-            const userPass = dbData.pass || localStorage.getItem(U_KEY + 'password') || '';
-            const userAvatar = localStorage.getItem(U_KEY + 'avatar') || `https://ui-avatars.com/api/?name=${userName}&background=e2e8f0&color=1b2559`;
+            const userEmail = dbData.email || localStorage.getItem(U_KEY + 'email') || '';
+            const userPass = dbData.pass || localStorage.getItem(U_KEY + 'password') || '';
+            const userAvatar = localStorage.getItem(U_KEY + 'avatar') || `https://ui-avatars.com/api/?name=${userName}&background=e2e8f0&color=1b2559`;
 
-            document.getElementById('input-name').value = userName;
-            document.getElementById('display-name').innerText = userName;
-            document.getElementById('input-email').value = userEmail;
-            document.getElementById('input-password').value = userPass;
-            document.getElementById('avatar-img').src = userAvatar;
-        });
+            document.getElementById('input-name').value = userName;
+            document.getElementById('display-name').innerText = userName;
+            document.getElementById('input-email').value = userEmail;
+            document.getElementById('input-password').value = userPass;
+            document.getElementById('avatar-img').src = userAvatar;
+        });
 
-        // Fotoğraf yükleme işlemi
-        function loadAvatar(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64Image = e.target.result;
-                    document.getElementById('avatar-img').src = base64Image;
-                    localStorage.setItem(U_KEY + 'avatar', base64Image); 
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+        // Fotoğraf yükleme işlemi
+        function loadAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Image = e.target.result;
+                    document.getElementById('avatar-img').src = base64Image;
+                    localStorage.setItem(U_KEY + 'avatar', base64Image); 
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
-       // Şifre Göster/Gizle (İkonlu Versiyon)
+       // Şifre Göster/Gizle (İkonlu Versiyon)
 function togglePassword() {
-    const passInput = document.getElementById('input-password');
-    const btn = document.querySelector('.toggle-pass');
-    
-    // Açık Göz İkonu (Şifre gizliyken görünür)
-    const eyeOpen = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-    
-    // Çizikli Kapalı Göz İkonu (Şifre açıkken görünür)
-    const eyeClosed = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+    const passInput = document.getElementById('input-password');
+    const btn = document.querySelector('.toggle-pass');
+    
+    // Açık Göz İkonu (Şifre gizliyken görünür)
+    const eyeOpen = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    
+    // Çizikli Kapalı Göz İkonu (Şifre açıkken görünür)
+    const eyeClosed = `<svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
 
-    if (passInput.type === "password") {
-        passInput.type = "text";
-        btn.innerHTML = eyeClosed; // Şifreyi görünür yapınca ikonu "çizikli göz" yap
-    } else {
-        passInput.type = "password";
-        btn.innerHTML = eyeOpen; // Şifreyi gizleyince ikonu "açık göz" yap
-    }
+    if (passInput.type === "password") {
+        passInput.type = "text";
+        btn.innerHTML = eyeClosed; // Şifreyi görünür yapınca ikonu "çizikli göz" yap
+    } else {
+        passInput.type = "password";
+        btn.innerHTML = eyeOpen; // Şifreyi gizleyince ikonu "açık göz" yap
+    }
 }
-        // Tüm profili ve Giriş Bilgilerini kaydet
-        function saveProfile() {
-            const newName = document.getElementById('input-name').value.trim();
-            const newEmail = document.getElementById('input-email').value.trim();
-            const newPass = document.getElementById('input-password').value.trim();
+        // Tüm profili ve Giriş Bilgilerini kaydet
+        function saveProfile() {
+            const newName = document.getElementById('input-name').value.trim();
+            const newEmail = document.getElementById('input-email').value.trim();
+            const newPass = document.getElementById('input-password').value.trim();
 
-            if (!newName) {
-                alert("Ad alanı boş bırakılamaz!");
-                return;
-            }
+            if (!newName) {
+                alert("Ad alanı boş bırakılamaz!");
+                return;
+            }
 
-            const oldName = userName;
-            const oldKey = oldName + "_";
-            const newKey = newName + "_";
+            const oldName = userName;
+            const oldKey = oldName + "_";
+            const newKey = newName + "_";
 
-            // 1. İNDEX.HTML İÇİN GİRİŞ KASASINI (db_) GÜNCELLE
-            let dbRecord = JSON.parse(localStorage.getItem('db_' + oldName)) || { user: oldName };
-            dbRecord.user = newName;
-            dbRecord.email = newEmail;
-            dbRecord.pass = newPass;
+            // 1. İNDEX.HTML İÇİN GİRİŞ KASASINI (db_) GÜNCELLE
+            let dbRecord = JSON.parse(localStorage.getItem('db_' + oldName)) || { user: oldName };
+            dbRecord.user = newName;
+            dbRecord.email = newEmail;
+            dbRecord.pass = newPass;
 
-            // Eğer kullanıcı adını değiştirdiyse
-            if (oldName !== newName) {
-                
-                // A) Eski giriş kasasını sil, yeni isimle aç
-                localStorage.setItem('db_' + newName, JSON.stringify(dbRecord));
-                localStorage.removeItem('db_' + oldName);
+            // Eğer kullanıcı adını değiştirdiyse
+            if (oldName !== newName) {
+                
+                // A) Eski giriş kasasını sil, yeni isimle aç
+                localStorage.setItem('db_' + newName, JSON.stringify(dbRecord));
+                localStorage.removeItem('db_' + oldName);
 
-                // B) ÇOK ÖNEMLİ: Altınları, dövizleri ve geçmişi yeni isme transfer et! (Para kaybolmasın)
-                let keysToMigrate = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    let key = localStorage.key(i);
-                    if (key && key.startsWith(oldKey)) {
-                        keysToMigrate.push(key);
-                    }
-                }
-                
-                keysToMigrate.forEach(key => {
-                    let data = localStorage.getItem(key);
-                    let newDataKey = key.replace(oldKey, newKey);
-                    localStorage.setItem(newDataKey, data); // Yeni isme kopyala
-                    localStorage.removeItem(key); // Eskiyi sil
-                });
+                // B) ÇOK ÖNEMLİ: Altınları, dövizleri ve geçmişi yeni isme transfer et! (Para kaybolmasın)
+                let keysToMigrate = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    let key = localStorage.key(i);
+                    if (key && key.startsWith(oldKey)) {
+                        keysToMigrate.push(key);
+                    }
+                }
+                
+                keysToMigrate.forEach(key => {
+                    let data = localStorage.getItem(key);
+                    let newDataKey = key.replace(oldKey, newKey);
+                    localStorage.setItem(newDataKey, data); // Yeni isme kopyala
+                    localStorage.removeItem(key); // Eskiyi sil
+                });
 
-                // C) Avatar güncellemesi (Adam kendi resmini koymadıysa harfleri yenile)
-                if (!localStorage.getItem(newKey + 'avatar') || localStorage.getItem(newKey + 'avatar').includes('ui-avatars')) {
-                    const newAvatar = `https://ui-avatars.com/api/?name=${newName}&background=e2e8f0&color=1b2559 &size=2048`;
-                    document.getElementById('avatar-img').src = newAvatar;
-                    localStorage.removeItem(newKey + 'avatar'); 
-                }
+                // C) Avatar güncellemesi (Adam kendi resmini koymadıysa harfleri yenile)
+                if (!localStorage.getItem(newKey + 'avatar') || localStorage.getItem(newKey + 'avatar').includes('ui-avatars')) {
+                    const newAvatar = `https://ui-avatars.com/api/?name=${newName}&background=e2e8f0&color=1b2559 &size=2048`;
+                    document.getElementById('avatar-img').src = newAvatar;
+                    localStorage.removeItem(newKey + 'avatar'); 
+                }
 
-            } else {
-                // Kullanıcı adı aynı, sadece şifre/email değiştiyse üstüne yaz
-                localStorage.setItem('db_' + oldName, JSON.stringify(dbRecord));
-            }
+            } else {
+                // Kullanıcı adı aynı, sadece şifre/email değiştiyse üstüne yaz
+                localStorage.setItem('db_' + oldName, JSON.stringify(dbRecord));
+            }
 
-            // Aktif kullanıcıyı sisteme tanıt
-            localStorage.setItem('aktifKullanici', newName);
-            userName = newName;
-            U_KEY = newKey;
+            // Aktif kullanıcıyı sisteme tanıt
+            localStorage.setItem('aktifKullanici', newName);
+            userName = newName;
+            U_KEY = newKey;
 
-            // Yedek olarak düz tut
-            localStorage.setItem(U_KEY + 'email', newEmail);
-            localStorage.setItem(U_KEY + 'password', newPass);
+            // Yedek olarak düz tut
+            localStorage.setItem(U_KEY + 'email', newEmail);
+            localStorage.setItem(U_KEY + 'password', newPass);
 
-            document.getElementById('display-name').innerText = newName;
+            document.getElementById('display-name').innerText = newName;
 
-            // Görsel Kaydetme efekti
-            const saveBtn = document.querySelector('.save-btn');
-            saveBtn.innerText = "Kaydedildi ✔";
-            saveBtn.style.backgroundColor = "#10b981";
-            saveBtn.style.color = "#ffffff";
-            
-            setTimeout(() => {
-                saveBtn.innerText = "Değişiklikleri Kaydet";
-                saveBtn.style.backgroundColor = ""; 
-                saveBtn.style.color = ""; 
-            }, 2000);
-        }
+            // Görsel Kaydetme efekti
+            const saveBtn = document.querySelector('.save-btn');
+            saveBtn.innerText = "Kaydedildi ✔";
+            saveBtn.style.backgroundColor = "#10b981";
+            saveBtn.style.color = "#ffffff";
+            
+            setTimeout(() => {
+                saveBtn.innerText = "Değişiklikleri Kaydet";
+                saveBtn.style.backgroundColor = ""; 
+                saveBtn.style.color = ""; 
+            }, 2000);
+        }
 </script>
 </body>
 </html>
+
